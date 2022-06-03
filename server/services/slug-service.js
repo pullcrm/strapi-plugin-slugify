@@ -34,7 +34,9 @@ module.exports = ({ strapi }) => ({
 			return;
 		}
 
-		data[field] = toSlug(referenceFieldValues, settings.slugifyOptions);
+		if (!data[field]) {
+			data[field] = toSlug(referenceFieldValues, settings.slugifyOptions);
+		}
 	},
 
 	async findOne(uid, query) {
@@ -48,6 +50,23 @@ module.exports = ({ strapi }) => ({
 		// collection
 		if (slugs && _.isArray(slugs) && slugs.length) {
 			return slugs[0];
+		}
+
+		// no result
+		return null;
+	},
+
+	async findMany(uid, query) {
+		const slugs = await strapi.entityService.findMany(uid, query);
+
+		// single
+		if (slugs && _.isPlainObject(slugs)) {
+			return [slugs];
+		}
+
+		// collection
+		if (slugs && _.isArray(slugs) && slugs.length) {
+			return slugs;
 		}
 
 		// no result

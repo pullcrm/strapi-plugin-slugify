@@ -3,7 +3,12 @@
 module.exports = [
 	{
 		method: 'GET',
-		path: '/slugs/:modelName/:slug',
-		handler: 'slugController.findSlug',
+		path: '/category/:category*',
+		handler: 'slugController.findByCategory',
+	},
+	{
+		method: 'GET',
+		path: '/:slug*',
+		handler: 'slugController.findOne',
 	},
 ];
