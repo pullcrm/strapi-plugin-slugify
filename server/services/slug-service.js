@@ -70,6 +70,6 @@ module.exports = ({ strapi }) => ({
 		}
 
 		// no result
-		return null;
+		return [];
 	},
 });
