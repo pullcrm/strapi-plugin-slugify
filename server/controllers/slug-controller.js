@@ -8,7 +8,7 @@ const { sanitizeOutput } = require('../utils/sanitizeOutput');
 
 module.exports = ({ strapi }) => ({
 	async findOne(ctx) {
-		const modelName = 'page';
+		const { modelName } = ctx.request.params;
 
 		const dirs = (ctx.request.params.slug || 'index').split('/');
 		const slug = dirs.pop();
@@ -50,9 +50,7 @@ module.exports = ({ strapi }) => ({
 
 
 	async findByCategory(ctx) {
-		const modelName = 'page';
-
-		const { category } = ctx.request.params;
+		const { modelName, category } = ctx.request.params;
 
 		const { models } = getPluginService(strapi, 'settingsService').get();
 		const { auth } = ctx.state;
