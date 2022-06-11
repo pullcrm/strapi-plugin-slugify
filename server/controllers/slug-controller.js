@@ -64,8 +64,10 @@ module.exports = ({ strapi }) => ({
 			query.filters = {};
 		}
 
-		query.filters.category = {}
-		query.filters.category[field] = category;
+		if (category) {
+			query.filters.category = {}
+			query.filters.category[field] = category;
+		}
 
 		// only return published entries by default if content type has draftAndPublish enabled
 		if (_.get(contentType, ['options', 'draftAndPublish'], false) && !query.publicationState) {
