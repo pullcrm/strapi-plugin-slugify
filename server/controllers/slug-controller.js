@@ -8,29 +8,23 @@ const { sanitizeOutput } = require('../utils/sanitizeOutput');
 
 module.exports = ({ strapi }) => ({
 	async findOne(ctx) {
-		const { modelName } = ctx.request.params;
-
-		const dirs = (ctx.request.params.slug || 'index').split('/');
-		const slug = dirs.pop();
+		const { model, slug, category, categoryKey, ...query } = ctx.query
 
 		const { models } = getPluginService(strapi, 'settingsService').get();
 		const { auth } = ctx.state;
 
-		const { uid, field, contentType } = models[modelName];
+		const { uid, field, contentType } = models[model];
 
 		// add slug filter to any already existing query restrictions
-		let query = ctx.query || {};
 		if (!query.filters) {
 			query.filters = {};
 		}
 
-		query.filters.category = {}
-
 		query.filters[field] = slug;
-		query.filters.category[field] = null;
 
-		if (dirs.length > 0) {
-			query.filters.category[field] = dirs.join('/');
+		if (categoryKey) {
+			query.filters[categoryKey] = {}
+			query.filters[categoryKey][field] = category || null;
 		}
 
 		// only return published entries by default if content type has draftAndPublish enabled
@@ -49,24 +43,21 @@ module.exports = ({ strapi }) => ({
 	},
 
 
-	async findByCategory(ctx) {
-		const { modelName, category } = ctx.request.params;
+	async findMany(ctx) {
+		const { model, category, categoryKey, ...query } = ctx.query
 
 		const { models } = getPluginService(strapi, 'settingsService').get();
 		const { auth } = ctx.state;
 
-		const { uid, field, contentType } = models[modelName];
-
-		// add slug filter to any already existing query restrictions
-		let query = ctx.query || {};
+		const { uid, field, contentType } = models[model];
 
 		if (!query.filters) {
 			query.filters = {};
 		}
 
-		if (category) {
-			query.filters.category = {}
-			query.filters.category[field] = category;
+		if (categoryKey) {
+			query.filters[categoryKey] = {}
+			query.filters[categoryKey][field] = category || null;
 		}
 
 		// only return published entries by default if content type has draftAndPublish enabled
