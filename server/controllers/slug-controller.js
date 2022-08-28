@@ -65,13 +65,14 @@ module.exports = ({ strapi }) => ({
 			query.publicationState = 'live';
 		}
 
-		let data = await getPluginService(strapi, 'slugService').findMany(uid, query);
+		const { results, pagination } = await strapi.service(uid).find(query);
 
-		if (data.length > 0) {
-			const sanitizedEntity = await sanitizeOutput(data, contentType, auth);
-			ctx.body = transformResponse(sanitizedEntity, {}, { contentType });
-		} else {
+		if (results.length === 0) {
 			throw new NotFoundError();
 		}
+
+		const sanitizedResults = await sanitizeOutput(results, contentType, auth);
+
+		ctx.body = transformResponse(sanitizedResults, { pagination }, { contentType });
 	},
 });

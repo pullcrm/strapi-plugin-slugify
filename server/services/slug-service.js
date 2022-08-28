@@ -55,21 +55,4 @@ module.exports = ({ strapi }) => ({
 		// no result
 		return null;
 	},
-
-	async findMany(uid, query) {
-		const slugs = await strapi.entityService.findMany(uid, query);
-
-		// single
-		if (slugs && _.isPlainObject(slugs)) {
-			return [slugs];
-		}
-
-		// collection
-		if (slugs && _.isArray(slugs) && slugs.length) {
-			return slugs;
-		}
-
-		// no result
-		return [];
-	},
 });
